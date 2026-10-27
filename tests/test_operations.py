@@ -11,6 +11,8 @@ from app.operations import (
     Division,
     Power,
     Root,
+    Modulus,
+    IntDivision,
     OperationFactory,
 )
 
@@ -182,6 +184,54 @@ class TestRoot(BaseOperationTest):
     }
 
 
+class TestModulus(BaseOperationTest):
+    """Test Modulus operation."""
+
+    operation_class = Modulus
+    valid_test_cases = {
+        "positive_numbers": {"a": "7", "b": "3", "expected": "1"},
+        "negative_dividend": {"a": "-7", "b": "3", "expected": "-1"},
+        "decimal_numbers": {"a": "5.5", "b": "2", "expected": "1.5"},
+        "zero_divide": {"a": "0", "b": "5", "expected": "0"},
+    }
+    invalid_test_cases = {
+        "divide_by_zero": {
+            "a": "5",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Division by zero is not allowed"
+        },
+    }
+
+
+class TestIntegerDivision(BaseOperationTest):
+    """Test integer division operation."""
+
+    operation_class = IntDivision
+    valid_test_cases = {
+        "positive_numbers": {"a": "7", "b": "3", "expected": "2"},
+        "negative_dividend": {"a": "-7", "b": "3", "expected": "-2"},
+        "decimal_numbers": {"a": "5.5", "b": "2", "expected": "2"},
+        }
+    invalid_test_cases = {
+        "divide_by_zero": {
+            "a": "5",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Division by zero is not allowed"
+        },
+    }
+
+
+
+
+
+
+
+
+
+
+
 class TestOperationFactory:
     """Test OperationFactory functionality."""
 
@@ -192,6 +242,8 @@ class TestOperationFactory:
             'subtract': Subtraction,
             'multiply': Multiplication,
             'divide': Division,
+            'modulus': Modulus,
+            'int_division': IntDivision,
             'power': Power,
             'root': Root,
         }

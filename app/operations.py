@@ -168,6 +168,32 @@ class Division(Operation):
         return a / b
 
 
+class Modulus(Operation):
+    """Remainder operation"""
+
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
+        super().validate_operands(a, b)
+        if b == 0:
+            raise ValidationError("Division by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return a % b
+
+
+class IntDivision(Operation):
+    """Integer division operation."""
+
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
+        super().validate_operands(a, b)
+        if b == 0:
+            raise ValidationError("Division by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        self.validate_operands(a, b)
+        return a // b
+
+
 class Power(Operation):
     """
     Power (exponentiation) operation implementation.
@@ -265,7 +291,9 @@ class OperationFactory:
         'multiply': Multiplication,
         'divide': Division,
         'power': Power,
-        'root': Root
+        'root': Root,
+        'modulus': Modulus,
+        'int_division': IntDivision,
     }
 
     @classmethod
