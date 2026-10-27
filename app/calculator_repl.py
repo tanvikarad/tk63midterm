@@ -37,7 +37,7 @@ def calculator_repl():
                     # Display available commands
                     print("\nAvailable commands:")
                     print(
-                        "  add, subtract, multiply, divide, power, root, modulus, int_division - Perform calculations"
+                        "  add, subtract, multiply, divide, power, root, modulus, int_division, percent, abs_difference - Perform calculations"
                     )
                     print("  history - Show calculation history")
                     print("  clear - Clear calculation history")
@@ -111,7 +111,7 @@ def calculator_repl():
 
                 if command in [
                     'add', 'subtract', 'multiply', 'divide', 'power', 'root', 'modulus',
-                    'int_division'
+                    'int_division', 'percent', 'abs_difference'
                 ]:
                     # Perform the specified arithmetic operation
                     try:
