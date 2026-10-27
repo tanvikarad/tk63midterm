@@ -42,6 +42,14 @@ def test_calculator_initialization(calculator):
     assert calculator.redo_stack == []
     assert calculator.operation_strategy is None
 
+# test history management
+def test_history_management(calculator):
+    operation = OperationFactory.create_operation('add')
+    calculator.set_operation(operation)
+    calculator.perform_operation(2, 3)
+    assert len(calculator.history) == 1
+    assert calculator.history[0].result == Decimal('5')
+
 # Test Logging Setup
 
 @patch('app.calculator.logging.info')
@@ -54,6 +62,7 @@ def test_logging_setup(logging_info_mock):
         # Instantiate calculator to trigger logging
         calculator = Calculator(CalculatorConfig())
         logging_info_mock.assert_any_call("Calculator initialized with configuration")
+
 
 # Test Adding and Removing Observers
 
@@ -74,6 +83,60 @@ def test_set_operation(calculator):
     operation = OperationFactory.create_operation('add')
     calculator.set_operation(operation)
     assert calculator.operation_strategy == operation
+
+
+#test for loading history from a CSV file. The test creates a temporary CSV file with a single calculation entry, then calls the load_history method of the Calculator class to load the history from the file. It asserts that the history is loaded correctly and that the values match the expected calculation.
+def test_load_history_success(calculator):
+    calculator.config.history_file.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame([{
+        "operation": "Addition",
+        "operand1": "2",
+        "operand2": "3",
+        "result": "5",
+        "timestamp": datetime.datetime(2025, 1, 2, 3, 4, 5).isoformat(),
+    }]).to_csv(calculator.config.history_file, index=False)
+
+    calculator.load_history()
+    assert len(calculator.history) == 1
+    assert calculator.history[0].operation == "Addition"
+    assert calculator.history[0].operand1 == Decimal("2")
+    assert calculator.history[0].operand2 == Decimal("3")
+    assert calculator.history[0].result == Decimal("5")
+
+
+def test_error_loading_history(calculator: Calculator):
+    calculator.config.history_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(calculator.config.history_file, 'w') as f:
+        f.write("operation,operand1,operand2,result,timestamp\n")
+        f.write("Addition,2,3,5\n")  # Missing timestamp
+
+    with pytest.raises(OperationError, match="Failed to load history"):
+        calculator.load_history()
+
+
+#testing for canceling operations in the REPL when entered first or second number. The mock_input simulates user input, and the
+#mock_print temporarily replaces the built-in print function to capture printed output for assertions.
+@patch('builtins.input', side_effect=['add', 'cancel', 'exit'])
+@patch('builtins.print')
+def test_calculator_repl_cancel_at_first_number(mock_print, mock_input):
+    calculator_repl()
+
+    mock_print.assert_any_call("Operation cancelled")
+    assert not any(
+        call.args[0].startswith("\nResult:")
+        for call in mock_print.call_args_list
+    )
+
+@patch('builtins.input', side_effect=['add', '2', 'cancel', 'exit'])
+@patch('builtins.print')
+def test_calculator_repl_cancel_at_second_number(mock_print, mock_input):
+    calculator_repl()
+
+    mock_print.assert_any_call("Operation cancelled")
+    assert not any(
+        call.args[0].startswith("\nResult:")
+        for call in mock_print.call_args_list
+    )
 
 # Test Performing Operations
 

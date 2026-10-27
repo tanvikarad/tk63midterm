@@ -51,6 +51,11 @@ def test_invalid_root():
         Calculation(operation="Root", operand1=Decimal("-16"), operand2=Decimal("2"))
 
 
+def test_zero_root():
+    with pytest.raises(OperationError, match="Zero root is undefined"):
+        Calculation(operation="Root", operand1=Decimal("16"), operand2=Decimal("0"))
+
+
 def test_unknown_operation():
     with pytest.raises(OperationError, match="Unknown operation"):
         Calculation(operation="Unknown", operand1=Decimal("5"), operand2=Decimal("3"))
