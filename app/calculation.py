@@ -41,6 +41,9 @@ class Calculation:
             ),
             "Modulus": lambda x, y: x % y if y != 0 else self._raise_div_zero(),
             "IntDivision": lambda x, y: x // y if y != 0 else self._raise_div_zero(),
+            "Percent": lambda x, y: (x / y) * 100 if y != 0 else self._raise_div_zero(),
+            "Abs_difference": lambda x, y: abs(x - y),
+            "abs_difference": lambda x, y: abs(x - y),
         }
 
         op = operations.get(self.operation)

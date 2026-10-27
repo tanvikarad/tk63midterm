@@ -76,6 +76,56 @@ def test_zero_root():
         Calculation(operation="Root", operand1=Decimal("16"), operand2=Decimal("0"))
 
 
+def test_percent():
+    calc = Calculation(operation="Percent", operand1=Decimal("50"), operand2=Decimal("200"))
+    assert calc.result == Decimal("25")
+
+def test_percent_by_zero():
+    with pytest.raises(OperationError, match="Division by zero is not allowed"):
+        Calculation(operation="Percent", operand1=Decimal("50"), operand2=Decimal("0"))
+
+def test_percent_zero_numerator():
+    calc = Calculation(operation="Percent", operand1=Decimal("0"), operand2=Decimal("200"))
+    assert calc.result == Decimal("0")
+
+def test_percent_negative_numerator():
+    calc = Calculation(operation="Percent", operand1=Decimal("-50"), operand2=Decimal("200"))
+    assert calc.result == Decimal("-25")
+
+def test_percent_negative_denominator():
+    calc = Calculation(operation="Percent", operand1=Decimal("50"), operand2=Decimal("-200"))
+    assert calc.result == Decimal("-25")
+
+
+def test_abs_difference():
+    calc = Calculation(operation="abs_difference", operand1=Decimal("5"), operand2=Decimal("3"))
+    assert calc.result == Decimal("2")
+
+def test_abs_difference_negative():
+    calc = Calculation(operation="abs_difference", operand1=Decimal("3"), operand2=Decimal("5"))
+    assert calc.result == Decimal("2")
+
+def test_abs_difference_zero():
+    calc = Calculation(operation="abs_difference", operand1=Decimal("5"), operand2=Decimal("5"))
+    assert calc.result == Decimal("0")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def test_unknown_operation():
     with pytest.raises(OperationError, match="Unknown operation"):
         Calculation(operation="Unknown", operand1=Decimal("5"), operand2=Decimal("3"))
