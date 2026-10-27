@@ -31,6 +31,26 @@ def test_division_by_zero():
         Calculation(operation="Division", operand1=Decimal("8"), operand2=Decimal("0"))
 
 
+def test_modulus():
+    calc = Calculation(operation="Modulus", operand1=Decimal("8"), operand2=Decimal("3"))
+    assert calc.result == Decimal("2")
+
+
+def test_modulus_by_zero():
+    with pytest.raises(OperationError, match="Division by zero is not allowed"):
+        Calculation(operation="Modulus", operand1=Decimal("8"), operand2=Decimal("0"))
+
+
+def test_int_division():
+    calc = Calculation(operation="IntDivision", operand1=Decimal("8"), operand2=Decimal("3"))
+    assert calc.result == Decimal("2")
+
+
+def test_int_division_by_zero():
+    with pytest.raises(OperationError, match="Division by zero is not allowed"):
+        Calculation(operation="IntDivision", operand1=Decimal("8"), operand2=Decimal("0"))
+
+
 def test_power():
     calc = Calculation(operation="Power", operand1=Decimal("2"), operand2=Decimal("3"))
     assert calc.result == Decimal("8")
