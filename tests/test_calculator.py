@@ -63,7 +63,6 @@ def test_logging_setup(logging_info_mock):
         calculator = Calculator(CalculatorConfig())
         logging_info_mock.assert_any_call("Calculator initialized with configuration")
 
-
 # Test Adding and Removing Observers
 
 def test_add_observer(calculator):
@@ -103,7 +102,8 @@ def test_load_history_success(calculator):
     assert calculator.history[0].operand2 == Decimal("3")
     assert calculator.history[0].result == Decimal("5")
 
-
+#testing for failed retrieval of the csv. The test creates a temporary CSV file with an invalid entry (missing timestamp) and then calls the load_history. 
+# Asserts that an OperationError is raised with the expected error message.
 def test_error_loading_history(calculator: Calculator):
     calculator.config.history_file.parent.mkdir(parents=True, exist_ok=True)
     with open(calculator.config.history_file, 'w') as f:
@@ -111,7 +111,7 @@ def test_error_loading_history(calculator: Calculator):
         f.write("Addition,2,3,5\n")  # Missing timestamp
 
     with pytest.raises(OperationError, match="Failed to load history"):
-        calculator.load_history()
+        calculator.load_history()   
 
 
 #testing for canceling operations in the REPL when entered first or second number. The mock_input simulates user input, and the
@@ -137,6 +137,13 @@ def test_calculator_repl_cancel_at_second_number(mock_print, mock_input):
         call.args[0].startswith("\nResult:")
         for call in mock_print.call_args_list
     )
+
+
+
+
+
+
+
 
 # Test Performing Operations
 
