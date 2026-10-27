@@ -275,6 +275,63 @@ class Root(Operation):
         return Decimal(pow(float(a), 1 / float(b)))
 
 
+class Percent(Operation):
+    """
+    Percent operation implementation.
+
+    Calculates the percentage of a number.
+    """
+
+    def validate_operands(self, a: Decimal, b: Decimal) -> None:
+    
+        super().validate_operands(a, b)
+        if b == 0:
+            raise ValidationError("Division by zero is not allowed")
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        """
+        Divide one number by another and multiply by 100 to get the percentage
+
+        Args:
+            a (Decimal): Dividend.
+            b (Decimal): Divisor.
+
+        Returns:
+            Decimal: Quotient of the division.
+        """
+        self.validate_operands(a, b)
+        return (a / b) * 100
+
+
+
+class Abs_difference(Operation):
+    """
+    Absolute difference operation implementation.
+
+    Calculates the absolute difference between two numbers.
+    """
+
+    def execute(self, a: Decimal, b: Decimal) -> Decimal:
+        """
+        Calculate the absolute difference between two numbers.
+
+        Args:
+            a (Decimal): First operand.
+            b (Decimal): Second operand.
+
+        Returns:
+            Decimal: Absolute difference between the two operands.
+        """
+        self.validate_operands(a, b)
+        return abs(a - b)
+
+
+
+
+
+
+
+
 class OperationFactory:
     """
     Factory class for creating operation instances.
@@ -294,6 +351,8 @@ class OperationFactory:
         'root': Root,
         'modulus': Modulus,
         'int_division': IntDivision,
+        'percent': Percent,
+        'abs_difference': Abs_difference,
     }
 
     @classmethod

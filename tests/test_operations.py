@@ -13,6 +13,8 @@ from app.operations import (
     Root,
     Modulus,
     IntDivision,
+    Percent,
+    Abs_difference,
     OperationFactory,
 )
 
@@ -223,6 +225,37 @@ class TestIntegerDivision(BaseOperationTest):
     }
 
 
+class TestPercent(BaseOperationTest):
+    """Test Percent operation."""
+
+    operation_class = Percent
+    valid_test_cases = {
+        "simple_percent": {"a": "50", "b": "200", "expected": "25"},
+        "zero_percent": {"a": "0", "b": "200", "expected": "0"},
+        "decimal_percent": {"a": "12.5", "b": "100", "expected": "12.5"},
+    }
+    invalid_test_cases = {
+        "divide_by_zero": {
+            "a": "50",
+            "b": "0",
+            "error": ValidationError,
+            "message": "Division by zero is not allowed"
+        },
+    }
+
+
+class TestAbsDifference(BaseOperationTest):
+    """Test Absolute Difference operation."""
+
+    operation_class = Abs_difference
+    valid_test_cases = {
+        "positive_numbers": {"a": "5", "b": "3", "expected": "2"},
+        "negative_numbers": {"a": "-5", "b": "-3", "expected": "2"},
+        "mixed_signs": {"a": "-5", "b": "3", "expected": "8"},
+        "zero_difference": {"a": "5", "b": "5", "expected": "0"},
+        "decimals": {"a": "5.5", "b": "3.3", "expected": "2.2"},
+    }
+    invalid_test_cases = {}  # Absolute difference has no invalid cases
 
 
 
@@ -246,6 +279,8 @@ class TestOperationFactory:
             'int_division': IntDivision,
             'power': Power,
             'root': Root,
+            'percent': Percent,
+            'abs_difference': Abs_difference,
         }
 
         for op_name, op_class in operation_map.items():
