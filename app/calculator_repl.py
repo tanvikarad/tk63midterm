@@ -4,12 +4,15 @@
 
 from decimal import Decimal
 import logging
+from colorama import Fore, Style, init
+
 
 from app.calculator import Calculator
 from app.exceptions import OperationError, ValidationError
 from app.history import AutoSaveObserver, LoggingObserver
 from app.operations import OperationFactory
 
+init(autoreset=True)
 
 def calculator_repl():
     """
@@ -35,27 +38,27 @@ def calculator_repl():
 
                 if command == 'help':
                     # Display available commands
-                    print("\nAvailable commands:")
-                    print(
+                    print(Fore.BLUE + "\nAvailable commands:")
+                    print(Fore.BLUE +
                         "  add, subtract, multiply, divide, power, root, modulus, int_division, percent, abs_difference - Perform calculations"
                     )
-                    print("  history - Show calculation history")
-                    print("  clear - Clear calculation history")
-                    print("  undo - Undo the last calculation")
-                    print("  redo - Redo the last undone calculation")
-                    print("  save - Save calculation history to file")
-                    print("  load - Load calculation history from file")
-                    print("  exit - Exit the calculator")
+                    print(Fore.MAGENTA + "  history - Show calculation history")
+                    print(Fore.MAGENTA + "  clear - Clear calculation history")
+                    print(Fore.MAGENTA + "  undo - Undo the last calculation")
+                    print(Fore.MAGENTA + "  redo - Redo the last undone calculation")
+                    print(Fore.MAGENTA + "  save - Save calculation history to file")
+                    print(Fore.MAGENTA + "  load - Load calculation history from file")
+                    print(Fore.MAGENTA + "  exit - Exit the calculator")
                     continue
 
                 if command == 'exit':
                     # Attempt to save history before exiting
                     try:
                         calc.save_history()
-                        print("History saved successfully.")
+                        print(Fore.GREEN + f"History saved successfully.")
                     except Exception as e:
-                        print(f"Warning: Could not save history: {e}")
-                    print("Goodbye!")
+                        print(Fore.RED + f"Warning: Could not save history: {e}")
+                    print(Fore.BLUE + f"Goodbye!")
                     break
 
                 if command == 'history':
@@ -72,41 +75,41 @@ def calculator_repl():
                 if command == 'clear':
                     # Clear calculation history
                     calc.clear_history()
-                    print("History cleared")
+                    print(Fore.GREEN + f"History cleared")
                     continue
 
                 if command == 'undo':
                     # Undo the last calculation
                     if calc.undo():
-                        print("Operation undone")
+                        print(Fore.GREEN + f"Operation undone")
                     else:
-                        print("Nothing to undo")
+                        print(Fore.RED + f"Nothing to undo")
                     continue
 
                 if command == 'redo':
                     # Redo the last undone calculation
                     if calc.redo():
-                        print("Operation redone")
+                        print(Fore.GREEN + f"Operation redone")
                     else:
-                        print("Nothing to redo")
+                        print(Fore.RED + f"Nothing to redo")
                     continue
 
                 if command == 'save':
                     # Save calculation history to file
                     try:
                         calc.save_history()
-                        print("History saved successfully")
+                        print(Fore.GREEN + f"History saved successfully.")
                     except Exception as e:
-                        print(f"Error saving history: {e}")
+                        print(Fore.RED + f"Error saving history: {e}")
                     continue
 
                 if command == 'load':
                     # Load calculation history from file
                     try:
                         calc.load_history()
-                        print("History loaded successfully")
+                        print(Fore.GREEN + f"History loaded successfully.")
                     except Exception as e:
-                        print(f"Error loading history: {e}")
+                        print(Fore.RED + f"Error loading history: {e}")
                     continue
 
                 if command in [
@@ -118,11 +121,11 @@ def calculator_repl():
                         print("\nEnter numbers (or 'cancel' to abort):")
                         a = input("First number: ")
                         if a.lower() == 'cancel':
-                            print("Operation cancelled")
+                            print(Fore.RED + f"Operation cancelled")
                             continue
                         b = input("Second number: ")
                         if b.lower() == 'cancel':
-                            print("Operation cancelled")
+                            print(Fore.RED + f"Operation cancelled")
                             continue
 
                         # Create the appropriate operation instance using the Factory pattern
@@ -136,33 +139,34 @@ def calculator_repl():
                         if isinstance(result, Decimal):
                             result = format(result.normalize(), "f")
 
-                        print(f"\nResult: {result}")
+                        print(Fore.YELLOW + f"\nResult: {result}")
+                        
                     except (ValidationError, OperationError) as e:
                         # Handle known exceptions related to validation or operation errors
-                        print(f"Error: {e}")
+                        print(Fore.RED + f"Error: {e}")
                     except Exception as e:
                         # Handle any unexpected exceptions
-                        print(f"Unexpected error: {e}")
+                        print(Fore.RED + f"Unexpected error: {e}")
                     continue
 
                 # Handle unknown commands
-                print(f"Unknown command: '{command}'. Type 'help' for available commands.")
+                print(Fore.RED + f"Unknown command: '{command}'. Type 'help' for available commands.")
 
             except KeyboardInterrupt:
                 # Handle Ctrl+C interruption gracefully
-                print("\nOperation cancelled")
+                print(Fore.RED + "\nOperation cancelled")
                 continue
             except EOFError:
                 # Handle end-of-file (e.g., Ctrl+D) gracefully
-                print("\nInput terminated. Exiting...")
+                print(Fore.RED + "\nInput terminated. Exiting...")
                 break
             except Exception as e:
                 # Handle any other unexpected exceptions
-                print(f"Error: {e}")
+                print(Fore.RED + f"Error: {e}")
                 continue
 
     except Exception as e:
         # Handle fatal errors during initialization
-        print(f"Fatal error: {e}")
-        logging.error(f"Fatal error in calculator REPL: {e}")
+        print(Fore.RED + f"Fatal error: {e}")
+        logging.error(Fore.RED + f"Fatal error in calculator REPL: {e}")
         raise

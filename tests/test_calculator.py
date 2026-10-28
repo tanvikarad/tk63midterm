@@ -5,6 +5,7 @@ import pytest
 from unittest.mock import Mock, patch, PropertyMock
 from decimal import Decimal
 from tempfile import TemporaryDirectory
+from colorama import Fore
 from app.calculator import Calculator
 from app.calculator_repl import calculator_repl
 from app.calculator_config import CalculatorConfig
@@ -121,7 +122,7 @@ def test_error_loading_history(calculator: Calculator):
 def test_calculator_repl_cancel_at_first_number(mock_print, mock_input):
     calculator_repl()
 
-    mock_print.assert_any_call("Operation cancelled")
+    mock_print.assert_any_call(Fore.RED + "Operation cancelled")
     assert not any(
         call.args[0].startswith("\nResult:")
         for call in mock_print.call_args_list
@@ -132,7 +133,7 @@ def test_calculator_repl_cancel_at_first_number(mock_print, mock_input):
 def test_calculator_repl_cancel_at_second_number(mock_print, mock_input):
     calculator_repl()
 
-    mock_print.assert_any_call("Operation cancelled")
+    mock_print.assert_any_call(Fore.RED + "Operation cancelled")
     assert not any(
         call.args[0].startswith("\nResult:")
         for call in mock_print.call_args_list
@@ -234,23 +235,23 @@ def test_calculator_repl_exit(mock_print, mock_input):
     with patch('app.calculator.Calculator.save_history') as mock_save_history:
         calculator_repl()
         mock_save_history.assert_called_once()
-        mock_print.assert_any_call("History saved successfully.")
-        mock_print.assert_any_call("Goodbye!")
+        mock_print.assert_any_call(Fore.GREEN + "History saved successfully.")
+        mock_print.assert_any_call(Fore.BLUE + "Goodbye!")
 
 @patch('builtins.input', side_effect=['help', 'exit'])
 @patch('builtins.print')
 def test_calculator_repl_help(mock_print, mock_input):
     calculator_repl()
-    mock_print.assert_any_call("\nAvailable commands:")
+    mock_print.assert_any_call(Fore.BLUE + "\nAvailable commands:")
 
 @patch('builtins.input', side_effect=['add', '2', '3', 'exit'])
 @patch('builtins.print')
 def test_calculator_repl_addition(mock_print, mock_input):
     calculator_repl()
-    mock_print.assert_any_call("\nResult: 5")
+    mock_print.assert_any_call(Fore.YELLOW + "\nResult: 5")
 
 @patch('builtins.input', side_effect=['divide', '100', '10', 'exit'])
 @patch('builtins.print')
 def test_calculator_repl_division_whole_number(mock_print, mock_input):
     calculator_repl()
-    mock_print.assert_any_call("\nResult: 10")
+    mock_print.assert_any_call(Fore.YELLOW + "\nResult: 10")
