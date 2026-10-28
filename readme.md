@@ -1,13 +1,18 @@
-# PROJECT OVERVIEW: 
+# PROJECT OVERVIEW:
+This is a command line calculator project made using Python. 
 
-to-do: 
+This calculator is able to perform basic arithmetic opertaions such as addition, subtraction, modulus, percents, etc. 
 
-Project Description: Overview of the calculator application and its features.
+Along with that, the users can save the hisotry of the calculations and display their history when they want. 
+
+They can also undo an operation so that it is taken out of the history. and if need be, redo it, so that it can be stored in hisotry again. 
+
+Users can save the history as needed and even clear their save history to start again. 
 
 
+There are more commands which are explained in detail in the Running the Project section. 
 
-
-
+# 
 
 ## Project Setup and Usage guide: 
 ### Install and Configure Git
