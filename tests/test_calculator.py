@@ -139,11 +139,16 @@ def test_calculator_repl_cancel_at_second_number(mock_print, mock_input):
         for call in mock_print.call_args_list
     )
 
+#test for no history 
+def test_no_calculation_in_history(calculator):
+    assert calculator.history == []
+    assert calculator.undo_stack == []
+    assert calculator.redo_stack == []
 
-
-
-
-
+# Test for Undo/Redo Without History
+def test_undo_redo_without_history(calculator):
+    assert not calculator.undo()
+    assert not calculator.redo()
 
 
 # Test Performing Operations
@@ -158,6 +163,7 @@ def test_perform_operation_validation_error(calculator):
     calculator.set_operation(OperationFactory.create_operation('add'))
     with pytest.raises(ValidationError):
         calculator.perform_operation('invalid', 3)
+
 
 def test_perform_operation_operation_error(calculator):
     with pytest.raises(OperationError, match="No operation set"):
@@ -201,8 +207,7 @@ def test_load_history(mock_exists, mock_read_csv, calculator):
         'result': ['5'],
         'timestamp': [datetime.datetime.now().isoformat()]
     })
-    
-    # Test the load_history functionality
+
     try:
         calculator.load_history()
         # Verify history length after loading
@@ -214,6 +219,20 @@ def test_load_history(mock_exists, mock_read_csv, calculator):
         assert calculator.history[0].result == Decimal("5")
     except OperationError:
         pytest.fail("Loading history failed due to OperationError")
+
+
+def test_load_empty_history(calculator):
+    calculator.history_file = calculator.config.history_file
+    calculator.history_file.parent.mkdir(parents=True, exist_ok=True)
+    calculator.history_file.touch()
+
+    with (
+        patch("app.calculator.pd.read_csv", return_value=pd.DataFrame()),
+        patch("app.calculator.logging.info") as log_info,
+    ):
+        calculator.load_history()
+
+    log_info.assert_any_call("Loaded empty history file")
         
             
 # Test Clearing History
@@ -226,6 +245,18 @@ def test_clear_history(calculator):
     assert calculator.history == []
     assert calculator.undo_stack == []
     assert calculator.redo_stack == []
+
+
+#test cleared history
+def test_clear_history_functionality(calculator):
+    operation = OperationFactory.create_operation('add')
+    calculator.set_operation(operation)
+    calculator.perform_operation(2, 3)
+    calculator.clear_history()
+    assert calculator.history == []
+    assert calculator.undo_stack == []
+    assert calculator.redo_stack == []
+
 
 # Test REPL Commands (using patches for input/output handling)
 
